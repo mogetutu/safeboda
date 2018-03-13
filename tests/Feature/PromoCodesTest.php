@@ -5,12 +5,11 @@ namespace Tests\Feature;
 use Illuminate\Foundation\Testing\Concerns\InteractsWithDatabase;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Safeboda\Promocode;
-use Safeboda\Scopes\NotExpired;
 use Tests\TestCase;
 
 class PromoCodesTest extends TestCase
 {
-    use DatabaseTransactions;
+//    use DatabaseTransactions;
     use InteractsWithDatabase;
 
     public function testCreatePromoCodes()

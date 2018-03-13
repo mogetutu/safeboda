@@ -1,7 +1,5 @@
 <?php
 
 return [
-    'promocode' => [
-        'radius' => 500, //metres
-    ],
+    'radius' => 500, //metres
 ];

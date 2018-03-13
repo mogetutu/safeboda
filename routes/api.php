@@ -17,6 +17,7 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
+Route::post('promo-codes/check', CheckPromoCode::class);
 Route::post('promo-codes/deactivate', DeactivatePromocodes::class);
 Route::get('promo-codes/active', ActivePromocodes::class);
 Route::apiResource('promo-codes', Promocodes::class);
