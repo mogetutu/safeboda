@@ -20,6 +20,14 @@ cache:
   directories:
     - $HOME/.composer/cache
 
+before_script:
+  - cp .env.travis .env
+  - mysql -e 'create database safeboda;'
+  - composer self-update
+  - composer install --no-interaction
+  - php artisan key:generate
+  - php artisan migrate
+
 services:
   - mysql
 
@@ -31,12 +39,5 @@ install:
   - if [[ $setup = 'stable' ]]; then travis_retry composer update --prefer-dist --no-interaction --prefer-stable --no-suggest; fi
   - if [[ $setup = 'lowest' ]]; then travis_retry composer update --prefer-dist --no-interaction --prefer-lowest --prefer-stable --no-suggest; fi
 
-before_script:
-  - cp .env.travis .env
-  - mysql -e 'create database safeboda;'
-  - composer self-update
-  - composer install --no-interaction
-  - php artisan key:generate
-  - php artisan migrate
 
 script: vendor/bin/phpunit
