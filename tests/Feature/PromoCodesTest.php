@@ -8,30 +8,22 @@ use Safeboda\Promocode;
 use Safeboda\Scopes\NotExpired;
 use Tests\TestCase;
 
-class GeneratePromoCodesTest extends TestCase
+class PromoCodesTest extends TestCase
 {
     use DatabaseTransactions;
     use InteractsWithDatabase;
 
-    protected $promocodes;
-
-    public function setUp()
+    public function testCreatePromoCodes()
     {
-        $this->promocodes = Promocode::withoutGlobalScope(NotExpired::class)->get();
-    }
-
-    public function testCreatePromoCode()
-    {
-        $promocodes = factory(Promocode::class, 5)->make();
-        $response = $this->json('POST', 'api/promo-codes', $promocodes->toArray());
+        $promocodes = factory(Promocode::class, 5)->make()->toArray();
+        $response = $this->json('POST', 'api/promo-codes', $promocodes);
 
         $response
             ->assertStatus(200)
             ->assertJson([
                 'created' => true,
+                'count' => count($promocodes),
             ]);
-
-        $this->assertDatabaseHas('promocodes', $this->promocodes->toArray());
     }
 
     public function testListPromoCodes()
@@ -43,7 +35,7 @@ class GeneratePromoCodesTest extends TestCase
         $response
             ->assertStatus(200)
             ->assertJson([
-                'data' => $this->promocodes->toArray(),
+                'data' => Promocode::all()->toArray(),
             ]);
     }
 
@@ -57,6 +49,20 @@ class GeneratePromoCodesTest extends TestCase
             ->assertStatus(200)
             ->assertJson([
                 'data' => $activePromocode,
+            ]);
+    }
+
+    public function testCanDeactivatePromoCodes()
+    {
+        factory(Promocode::class, 10)->create();
+        $ids = Promocode::pluck('id')->all();
+        $updated = count($ids) ?? false;
+        $response = $this->json('POST', 'api/promo-codes/deactivate', ['ids' => $ids]);
+
+        $response
+            ->assertStatus(200)
+            ->assertJson([
+                'updated' => $updated,
             ]);
     }
 }
