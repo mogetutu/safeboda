@@ -9,7 +9,7 @@ use Tests\TestCase;
 
 class PromoCodesTest extends TestCase
 {
-//    use DatabaseTransactions;
+    use DatabaseTransactions;
     use InteractsWithDatabase;
 
     public function testCreatePromoCodes()
