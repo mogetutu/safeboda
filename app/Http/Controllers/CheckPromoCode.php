@@ -4,7 +4,6 @@ namespace Safeboda\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Safeboda\Promocode;
-use function array_merge;
 
 class CheckPromoCode extends Controller
 {
