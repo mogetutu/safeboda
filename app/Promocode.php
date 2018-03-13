@@ -7,7 +7,6 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use Polyline;
 use Safeboda\Scopes\NotExpired;
-use function array_merge;
 
 class Promocode extends Model
 {
@@ -48,44 +47,32 @@ class Promocode extends Model
 
     /**
      * @param $promocode
-     * @param array $origin
-     * @param array $destination
+     * @param array $points
      *
      * @return bool
      */
-    public function validateCode($promocode, array $origin, array $destination)
+    public function validateCode($promocode, array $points)
     {
-        $originlatitude = head($origin);
-        $originlongitude = end($origin);
-
-        $destinationlatitude = head($destination);
-        $destinationlongitude = end($destination);
-
+        $codes = [];
         $expression = 'SELECT code, ((ACOS(SIN(:latitude * PI() / 180) * SIN(latitude * PI() / 180) + COS(:latitude2 * PI() / 180) * COS(latitude * PI() / 180) * COS((:longitude - longitude) * PI() / 180)) * 180 / PI()) * 60 * 1.1515) AS distance FROM promocodes HAVING distance <= :radius ORDER BY distance ASC';
+        foreach ($points as $point) {
+            $latitude = head($point);
+            $longitude = end($point);
 
-        $originCodes = DB::select(
-            $expression,
-            [
-                'latitude' => $originlatitude,
-                'latitude2' => $originlatitude,
-                'longitude' => $originlongitude,
-                'radius' => config('safeboda.promocodes.radius'),
-            ]
-        );
+            $code = DB::select(
+                $expression,
+                [
+                    'latitude' => $latitude,
+                    'latitude2' => $latitude,
+                    'longitude' => $longitude,
+                    'radius' => config('safeboda.promocodes.radius'),
+                ]
+            );
 
-        $destinationCodes = DB::select(
-            $expression,
-            [
-                'latitude' => $destinationlatitude,
-                'latitude2' => $destinationlatitude,
-                'longitude' => $destinationlongitude,
-                'radius' => config('safeboda.promocodes.radius'),
-            ]
-        );
+            array_push($codes, array_pluck($code, 'code'));
+        }
 
-        $codes = array_merge($originCodes, $destinationCodes);
-
-        return in_array($promocode, array_pluck($codes, 'code'));
+        return in_array($promocode, array_collapse($codes));
     }
 
     /**
