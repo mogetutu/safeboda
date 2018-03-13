@@ -31,18 +31,17 @@ class CheckPromoCode extends Controller
     public function __invoke(Request $request)
     {
         $request->only('code', 'origin', 'destination');
-
-        $valid = $this->promocode->validateCode(
-            $request->code,
-            $request->origin,
-            $request->destination
-        );
-
-        $polyline = $this->promocode->getPolyline(array_merge($request->origin, $request->destination));
+        $validCode = $this->promocode->where('code', $request->code)->active()->count();
+        if (!$validCode) {
+            return response(['data' => [
+                'valid' => (bool) $validCode,
+                'polyline' => null,
+            ]]);
+        }
 
         return response(['data' => [
-            'valid' => $valid,
-            'polyline' => $polyline,
+            'valid' => $this->promocode->validateCode($request->code, $request->origin, $request->destination),
+            'polyline' => $this->promocode->getPolyline(array_merge($request->origin, $request->destination)),
         ]]);
     }
 }
