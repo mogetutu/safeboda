@@ -14,14 +14,13 @@ class PromoCodesTest extends TestCase
 
     public function testCreatePromoCodes()
     {
-        $promocodes = factory(Promocode::class, 5)->make()->toArray();
+        $promocodes = factory(Promocode::class)->make()->toArray();
         $response = $this->json('POST', 'api/promo-codes', $promocodes);
 
         $response
             ->assertStatus(200)
             ->assertJson([
                 'created' => true,
-                'count' => count($promocodes),
             ]);
     }
 
