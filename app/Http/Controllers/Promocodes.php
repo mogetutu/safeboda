@@ -3,7 +3,7 @@
 namespace Safeboda\Http\Controllers;
 
 use DB;
-use Illuminate\Http\Request;
+use Safeboda\Http\Requests\Promocode as PromocodeFormRequest;
 use Safeboda\Promocode;
 
 class Promocodes extends Controller
@@ -25,13 +25,22 @@ class Promocodes extends Controller
      *
      * @return array
      */
-    public function store(Request $request)
+    public function store(PromocodeFormRequest $request)
     {
-        $content = DB::table('promocodes')->insert($request->toArray());
+        $validator = Validator::make($data, $rules);
 
-        return response([
-            'created' => $content,
-            'count' => count($request->toArray()),
+        if ($validator->fails()) {
+
+    //pass validator errors as errors object for ajax response
+
+            return response()->json(['errors' => $validator->errors()]);
+        } else {
+            $content = DB::table('promocodes')->insertGetId($request->toArray());
+
+            return response([
+            'created' => (bool) $content,
+            'count' => count($content),
         ]);
+        }
     }
 }
