@@ -23,6 +23,8 @@ class Promocode extends Model
         'active',
         'expires_at',
         'discount',
+        'latitude',
+        'longitude',
     ];
 
     /**

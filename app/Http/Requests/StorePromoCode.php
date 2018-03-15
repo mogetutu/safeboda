@@ -3,8 +3,10 @@
 namespace Safeboda\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Http\Exceptions\HttpResponseException;
+use Illuminate\Contracts\Validation\Validator;
 
-class Promocode extends FormRequest
+class StorePromoCode extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -28,8 +30,18 @@ class Promocode extends FormRequest
             'discount' => 'required',
             'active' => 'required',
             'expires_at' => 'date|nullable',
-            'longitude' => 'double',
-            'latitude' => 'double',
+            'longitude' => 'present',
+            'latitude' => 'present',
         ];
+    }
+
+    /**
+     * Custom failedValidation
+     * @param  Validator $validator [description]
+     * @return HttpResponseException
+     */
+    protected function failedValidation(Validator $validator)
+    {
+        throw new HttpResponseException(response()->json($validator->errors(), 422));
     }
 }

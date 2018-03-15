@@ -67,5 +67,54 @@ Open browser and try accessing `https://safeboda.test/api/promo-codes` You shoul
 |        | DELETE    | api/promo-codes/{promo_code} |
 |        | GET|HEAD  | api/user                     |
 
+#### Examples
+```bash
 curl -X GET https://safeboda.app/api/promo-codes -k
-curl -X POST https://safeboda.app/api/promo-codes -k
+```
+
+```bash
+curl -X GET https://safeboda.app/api/promo-codes/active -k
+```
+
+```bash
+curl -X POST \
+  https://safeboda.app/api/promo-codes -k \
+  -H 'Content-Type: application/json' \
+  -d '{
+        "code": "4337897244702",
+        "latitude": "-63.140778",
+        "longitude": "-64.759483",
+        "discount": 200,
+        "active": 1,
+        "expires_at": "2018-06-01"
+    }'
+```
+
+```bash
+curl -X POST \
+  https://safeboda.test/api/promo-codes/check \
+  -H 'Content-Type: application/json' \
+  -d '{
+       "code": "4337897244702",
+       "origin": [
+          "-63.140778",
+          "-64.759483"
+       ],
+       "destination": [
+          "-80.431044",
+          "-103.368767"
+       ]
+    }'
+```
+
+```bash
+curl -X POST \
+  https://safeboda.test/api/promo-codes/deactivate \
+  -H 'Content-Type: application/json' \
+  -d '{
+   "ids": [
+      "201",
+      "202"
+   ]
+}'
+```

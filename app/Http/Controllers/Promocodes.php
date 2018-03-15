@@ -2,8 +2,7 @@
 
 namespace Safeboda\Http\Controllers;
 
-use DB;
-use Safeboda\Http\Requests\Promocode as PromocodeFormRequest;
+use Safeboda\Http\Requests\StorePromoCode;
 use Safeboda\Promocode;
 
 class Promocodes extends Controller
@@ -21,26 +20,16 @@ class Promocodes extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request $request
+     * @param StorePromoCode $request
      *
      * @return array
      */
-    public function store(PromocodeFormRequest $request)
+    public function store(StorePromoCode $request)
     {
-        $validator = Validator::make($data, $rules);
+        $promocode = Promocode::create($request->all());
 
-        if ($validator->fails()) {
-
-    //pass validator errors as errors object for ajax response
-
-            return response()->json(['errors' => $validator->errors()]);
-        } else {
-            $content = DB::table('promocodes')->insertGetId($request->toArray());
-
-            return response([
-            'created' => (bool) $content,
-            'count' => count($content),
+        return response([
+            'created' => $promocode,
         ]);
-        }
     }
 }
